@@ -39,7 +39,7 @@ import static adventure4spigot.util.GameVersion.ocbClass;
  * therefore we have to serialize but luckily no need to convert to a
  * medium nms.IChatBaseComponent
  */
-public class ByComponentString implements AdventureItem {
+final class ByComponentString implements AdventureItem {
 
     private static final GsonComponentSerializer SERIALIZER = GsonComponentSerializer.gson();
 
