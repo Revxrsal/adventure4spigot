@@ -1,0 +1,28 @@
+plugins {
+    id "java"
+}
+
+group = "io.github.revxrsal"
+version = "1.0-SNAPSHOT"
+
+repositories {
+    mavenCentral()
+    maven { url = "https://oss.sonatype.org/content/groups/public/" }
+    maven { url = "https://repo.papermc.io/repository/maven-public/" }
+}
+
+dependencies {
+    implementation "net.kyori:adventure-api:4.11.0"
+    implementation "net.kyori:adventure-text-serializer-gson:4.11.0"
+    implementation "net.kyori:adventure-text-serializer-plain:4.11.0"
+    implementation "net.kyori:adventure-text-serializer-legacy:4.11.0"
+
+    compileOnly "org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT"
+    compileOnly "org.jetbrains:annotations:22.0.0"
+    compileOnly "org.projectlombok:lombok:1.18.24"
+    annotationProcessor "org.projectlombok:lombok:1.18.24"
+}
+
+processResources {
+    expand("version": project.version)
+}
