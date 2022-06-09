@@ -40,7 +40,6 @@ import static adventure4spigot.util.GameVersion.ocbClass;
  */
 final class ByPaper implements AdventureItem {
 
-    private static final Class<?> ITEM_META = ocbClass("inventory.CraftMetaItem");
     private static final boolean IS_SUPPORTED;
 
     private static MethodCaller getDisplayName, setDisplayName;
@@ -49,7 +48,7 @@ final class ByPaper implements AdventureItem {
     static {
         boolean isSupported = false;
         try {
-            Method method = ITEM_META.getDeclaredMethod("displayName");
+            Method method = ItemMeta.class.getDeclaredMethod("displayName");
             if (method.getReturnType().getSimpleName().equals("Component"))
                 isSupported = true;
         } catch (NoSuchMethodException ignored) {
