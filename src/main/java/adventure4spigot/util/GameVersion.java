@@ -78,6 +78,24 @@ public final class GameVersion {
     }
 
     /**
+     * Returns the NMS class from the specified name
+     *
+     * @param versioned  Name of the class in versioned NMS versions
+     * @param unversiond Name of the class in newer NMS versions
+     * @return The class instance
+     */
+    public static @NotNull Class<?> nmsClass(@NotNull String versioned, @NotNull String unversiond) {
+        try {
+            if (PROTOCOL >= 17) {
+                return Class.forName("net.minecraft." + unversiond);
+            }
+            return Class.forName("net.minecraft.server." + VERSION + "." + versioned);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * Returns the CraftBukkit class from the specified name
      *
      * @param name Name of the class

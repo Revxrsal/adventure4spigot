@@ -24,10 +24,9 @@
 package adventure4spigot;
 
 import adventure4spigot.item.AdventureItem;
+import adventure4spigot.scoreboard.AdventureScoreboard;
 import adventure4spigot.util.GameVersion;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.ComponentSerializer;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -37,6 +36,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Scoreboard;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -72,7 +73,6 @@ public final class SpigotAdventure {
      * @return The new inventory.
      * @throws IllegalArgumentException if the {@link InventoryType} cannot be
      *                                  viewed.
-     * @see InventoryType#isCreatable()
      */
     public static Inventory createInventory(@Nullable InventoryHolder owner, @NotNull InventoryType type, @NotNull Component title) {
         return Bukkit.createInventory(owner, type, LegacyComponentSerializer.legacySection().serialize(title));
@@ -141,6 +141,49 @@ public final class SpigotAdventure {
     }
 
     /**
+     * Registers an Objective on this Scoreboard
+     *
+     * @param name        Name of the Objective
+     * @param criteria    Criteria for the Objective
+     * @param displayName Name displayed to players for the Objective.
+     * @return The registered Objective
+     * @throws IllegalArgumentException if name is null
+     * @throws IllegalArgumentException if name is longer than 32767
+     *                                  characters.
+     * @throws IllegalArgumentException if criteria is null
+     * @throws IllegalArgumentException if displayName is null
+     * @throws IllegalArgumentException if displayName is longer than 128
+     *                                  characters.
+     * @throws IllegalArgumentException if an objective by that name already
+     *                                  exists
+     */
+    public static Objective registerNewObjective(@NotNull Scoreboard scoreboard, @NotNull String name, @NotNull String criteria, @NotNull Component displayName) {
+        return SCOREBOARD.registerNewObjective(scoreboard, name, criteria, displayName);
+    }
+
+    /**
+     * Sets the name displayed to players for this objective.
+     *
+     * @param displayName Display name to set
+     * @throws IllegalArgumentException if displayName is null
+     * @throws IllegalArgumentException if displayName is longer than 128
+     *                                  characters.
+     */
+    public static void setDisplayName(Objective objective, Component displayName) {
+        SCOREBOARD.setDisplayName(objective, displayName);
+    }
+
+    /**
+     * Gets the name displayed to players for this objective
+     *
+     * @return this objective's display name
+     * @throws IllegalStateException if this objective has been unregistered
+     */
+    public static Component getDisplayName(Objective objective) {
+        return SCOREBOARD.getDisplayName(objective);
+    }
+
+    /**
      * Checks whether is Adventure natively supported on this platform
      *
      * @return If adventure is natively supported
@@ -150,8 +193,8 @@ public final class SpigotAdventure {
     }
 
     private static final boolean IS_NATIVELY_SUPPORTED = checkIfSupported();
-    private static final ComponentSerializer<?, ?, String> SERIALIZER = getAppropriateSerializer();
     private static final AdventureItem ITEM = AdventureItem.ITEM.get();
+    private static final AdventureScoreboard SCOREBOARD = AdventureScoreboard.SCOREBOARD.get();
 
     private static boolean checkIfSupported() {
         try {
@@ -160,15 +203,5 @@ public final class SpigotAdventure {
         } catch (NoSuchMethodException ignored) {
             return false;
         }
-    }
-
-    private static ComponentSerializer<?, ?, String> getAppropriateSerializer() {
-        if (GameVersion.EXACT >= 16.5)
-            return GsonComponentSerializer.gson();
-        else if (GameVersion.PROTOCOL >= 14 && GameVersion.PROTOCOL <= 16)
-            return GameVersion.supportsHexColors() ?
-                    GsonComponentSerializer.gson() : GsonComponentSerializer.colorDownsamplingGson();
-        else
-            return LegacyComponentSerializer.legacySection();
     }
 }
